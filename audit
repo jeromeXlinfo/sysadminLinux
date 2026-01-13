@@ -1,0 +1,15 @@
+echo "Audit de $(hostname)"
+echo
+echo le $(date -I) par $(whoami)
+echo
+echo "Version du noyau : "
+uname -a
+echo
+echo "Nombre de processus : $(ps -ef |wc -l)"
+echo
+echo "Occupation Mémoire :"
+free -h
+echo
+echo "Occupation Disques :"
+df -h -t ext4
+
