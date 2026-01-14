@@ -1,0 +1,43 @@
+#!/bin/bash
+
+echo "Téléchargement et installation de la dernière version de wordpress..."
+echo
+
+# Téléchargement de wordpress français latest
+cd /var/www
+rm -f latest-fr_FR.zip
+wget https://fr.wordpress.org/latest-fr_FR.zip
+
+# Installation de wordpress
+unzip -q -o latest-fr_FR.zip
+
+# Changement propriétaire wordpress
+chown -R www-data:www-data wordpress/
+
+# Ecriture du virtual host Apache
+
+cat > /etc/apache2/sites-available/wordpress.conf << EOF
+<VirtualHost *:80>
+        ServerName wordpress.jerome.lan
+        DocumentRoot /var/www/wordpress
+</VirtualHost>
+EOF
+
+# Activation du virtualhost wordpress
+a2ensite wordpress > /dev/null
+
+# Rechargement Apache
+systemctl reload apache2
+
+# Création de la base de données wordpress
+
+mariadb << EOF
+create database if not exists wordpress;
+create user if not exists wordpress@localhost identified by "secret";
+grant all privileges on wordpress.* to wordpress@localhost;
+flush privileges;
+EOF
+
+# Fin de l'installation
+echo "L'installation de votre site wordpress est terminée et doit être finalisée sur http://wordpress.jerome.lan"
+
