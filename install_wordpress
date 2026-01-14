@@ -20,6 +20,9 @@ cat > /etc/apache2/sites-available/wordpress.conf << EOF
 <VirtualHost *:80>
         ServerName wordpress.jerome.lan
         DocumentRoot /var/www/wordpress
+	<Directory /var/www/wordpress>
+		AllowOverride All
+	</Directory>
 </VirtualHost>
 EOF
 
@@ -40,4 +43,14 @@ EOF
 
 # Fin de l'installation
 echo "L'installation de votre site wordpress est terminée et doit être finalisée sur http://wordpress.jerome.lan"
+
+
+
+
+
+
+
+
+
+
 
