@@ -12,4 +12,4 @@ free -h
 echo
 echo "Occupation Disques :"
 df -h -t ext4
-
+lfsdlfsdl
