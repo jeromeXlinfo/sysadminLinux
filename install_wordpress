@@ -1,7 +1,7 @@
 #!/bin/bash
 
-user="bob"
-pass="robert"
+user="alice"
+pass="jose"
 
 useradd $user -m -s /bin/bash
 echo $user:$pass | chpasswd 2>/dev/null
@@ -23,7 +23,7 @@ mv wordpress /var/www/$user
 # On se déplace dans /var/www
 cd /var/www
 # Changement propriétaire wordpress
-chown -R www-data:www-data $user/
+chown -R $user:$user $user/
 
 # Ecriture du virtual host Apache
 cat > /etc/apache2/sites-available/$user.conf << EOF
@@ -74,10 +74,22 @@ sed -i "s/database_name_here/${user}/" ${user}/wp-config.php
 sed -i "s/username_here/${user}/" ${user}/wp-config.php
 sed -i "s/password_here/${pass}/" ${user}/wp-config.php
 
+# Ajout cname dynamique
+nsupdate << EOF
+server 127.0.0.1
+zone jerome.lan
+update add ${user}.jerome.lan. 604800 in cname debian.jerome.lan.
+send
+EOF
+
 
 # Fin de l'installation
 mail ${user}@jerome.lan -s "Votre site Wordpress" << EOF
+Bonjour,
 L'installation de votre site wordpress est terminée et doit être finalisée sur https://${user}.jerome.lan.
+Vous avez accès à vos mails sur https://${user}.jerome.lan/roundcube et à votre base de données sur https://${user}.jerome.lan/phpmyadmin
+login: $user
+mot de passe: $pass
 Cordialement,
 EOF
 
